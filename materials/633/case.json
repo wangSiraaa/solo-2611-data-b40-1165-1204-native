@@ -1,0 +1,93 @@
+{
+  "clubs": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "before_fixture": [
+    {
+      "match_id": "ab",
+      "round": 1,
+      "home": "A",
+      "away": "B",
+      "slot": "s"
+    },
+    {
+      "match_id": "cd",
+      "round": 1,
+      "home": "C",
+      "away": "D",
+      "slot": "s"
+    },
+    {
+      "match_id": "ac",
+      "round": 2,
+      "home": "C",
+      "away": "A",
+      "slot": "s"
+    },
+    {
+      "match_id": "bd",
+      "round": 2,
+      "home": "B",
+      "away": "D",
+      "slot": "s"
+    },
+    {
+      "match_id": "ad",
+      "round": 3,
+      "home": "D",
+      "away": "A",
+      "slot": "s"
+    },
+    {
+      "match_id": "bc",
+      "round": 3,
+      "home": "B",
+      "away": "C",
+      "slot": "s"
+    }
+  ],
+  "flipped_match_ids": [
+    "ab",
+    "ac",
+    "bc"
+  ],
+  "scores": [
+    {
+      "match_id": "ab",
+      "home_goals": 1,
+      "away_goals": 0
+    },
+    {
+      "match_id": "cd",
+      "home_goals": 1,
+      "away_goals": 0
+    },
+    {
+      "match_id": "ac",
+      "home_goals": 3,
+      "away_goals": 0
+    },
+    {
+      "match_id": "bd",
+      "home_goals": 2,
+      "away_goals": 0
+    },
+    {
+      "match_id": "ad",
+      "home_goals": 0,
+      "away_goals": 10
+    },
+    {
+      "match_id": "bc",
+      "home_goals": 2,
+      "away_goals": 0
+    }
+  ],
+  "slot_capacity": 2,
+  "blackouts": [],
+  "penalties": {},
+  "round_through": 3
+}
