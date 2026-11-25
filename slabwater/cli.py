@@ -91,12 +91,35 @@ def main(argv: list[str] | None = None) -> int:
     reopen_parser.add_argument("db_dir")
     reopen_parser.add_argument("plan_id")
 
+    overprint_parser = sub.add_parser(
+        "overprint", help="run an overprint material end to end"
+    )
+    overprint_parser.add_argument("input", help="path to an overprint material input.json")
+    overprint_parser.add_argument("--db-dir", default=None)
+
+    reopen_print_parser = sub.add_parser(
+        "reopen-print", help="re-open a printed overprint order"
+    )
+    reopen_print_parser.add_argument("db_dir")
+    reopen_print_parser.add_argument("print_id")
+
     args = parser.parse_args(argv)
     if args.command == "run":
         report = run_material(args.input, args.db_dir)
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0
+    if args.command == "overprint":
+        from .overprint_cli import run_overprint_material
+
+        report = run_overprint_material(args.input, args.db_dir)
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+        return 0
     db_dir = Path(args.db_dir)
+    if args.command == "reopen-print":
+        from .overprint_cli import reopen_print
+
+        print(json.dumps(reopen_print(db_dir, args.print_id), indent=2, ensure_ascii=False))
+        return 0
     catalog = Catalog.open(db_dir / "catalog.db")
     publisher = Publisher(db_dir / "plans.db", catalog)
     try:

@@ -1,0 +1,80 @@
+{
+  "height": 1,
+  "width": 3,
+  "ceiling": 9,
+  "batches": [
+    [
+      {"tile_id": "PLATE", "revision": 1, "row": 0, "col": 0, "values": [[2, 1, 0]]}
+    ],
+    [
+      {"tile_id": "PLATE", "revision": 2, "row": 0, "col": 0, "values": [[0, 2, 0]]}
+    ],
+    [
+      {"tile_id": "PLATE", "revision": 3, "row": 0, "col": 0, "values": [[2, 1, 0]]}
+    ],
+    [
+      {"tile_id": "PLATE", "revision": 4, "row": 0, "col": 0, "values": [[0, 1, 0]]}
+    ],
+    [
+      {"tile_id": "PLATE", "revision": 5, "row": 0, "col": 0, "values": [[1, 0, 1]]}
+    ]
+  ],
+  "orders": [
+    {
+      "id": "TWO-COLOR",
+      "plates": [
+        {"version": 1, "ink": "blue", "orientation": "identity", "depth": 0},
+        {"version": 2, "ink": "yellow", "orientation": "identity", "depth": 0}
+      ],
+      "allowed_shifts": [[0, 0]],
+      "ink_overlay": ["blue", "yellow"],
+      "required_colors": ["blue", "yellow", "white"],
+      "process": "pin",
+      "sheets": [{"id": "only-sheet", "paper_rejects": []}]
+    },
+    {
+      "id": "CHANGED-PLATE",
+      "plates": [
+        {"version": 1, "ink": "blue", "orientation": "identity", "depth": 0},
+        {"version": 3, "ink": "yellow", "orientation": "identity", "depth": 0}
+      ],
+      "allowed_shifts": [[0, 0]],
+      "ink_overlay": ["blue", "yellow"],
+      "required_colors": ["blue", "yellow", "white"],
+      "process": "pin",
+      "sheets": [{"id": "only-sheet", "paper_rejects": []}]
+    },
+    {
+      "id": "REJECT-MIDDLE-YELLOW",
+      "plates": [
+        {"version": 1, "ink": "blue", "orientation": "identity", "depth": 0},
+        {"version": 2, "ink": "yellow", "orientation": "identity", "depth": 0}
+      ],
+      "allowed_shifts": [[0, 0]],
+      "ink_overlay": ["blue", "yellow"],
+      "required_colors": ["blue", "yellow", "white"],
+      "process": "pin",
+      "sheets": [
+        {"id": "only-sheet", "paper_rejects": [{"cell": [0, 1], "inks": ["yellow"]}]}
+      ]
+    },
+    {
+      "id": "CLAMP-FULL-EDGE",
+      "plates": [
+        {"version": 4, "ink": "blue", "orientation": "identity", "depth": 0},
+        {"version": 5, "ink": "yellow", "orientation": "identity", "depth": 0}
+      ],
+      "allowed_shifts": [[0, 0], [0, 1]],
+      "ink_overlay": ["blue", "yellow"],
+      "required_colors": ["blue", "yellow", "white"],
+      "process": "clamp",
+      "require_full_edge": true,
+      "registration": {
+        "marks": [{"cell": [0, 0], "ink": "A"}, {"cell": [0, 1], "ink": "B"}],
+        "true_shift": [0, 1],
+        "clamp_cells": [[0, 2]]
+      },
+      "sheets": [{"id": "only-sheet", "paper_rejects": []}]
+    }
+  ]
+}
