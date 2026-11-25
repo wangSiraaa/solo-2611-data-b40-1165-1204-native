@@ -9,6 +9,9 @@
 | `slabwater/catalog.py` | 独立、只追加的分块标高目录；批次校验、冻结切面、逐格来源 |
 | `slabwater/solver.py` | 水位/蓄水计算；按出口集合搜索可行计划 |
 | `slabwater/publisher.py` | 发布、幂等复读、拒绝留证、核计划、重开 |
+| `slabwater/sun.py` | 无状态日照规则与健壮策略引擎；方向卡解析、遮挡与逐格来源、固定/带轮经营 |
+| `slabwater/adoption.py` | 苗床认养合同与实地交接账本；签约、幂等、拒绝留证、交接、重开 |
+| `slabwater/winter.py` | 确定性冬季苗床材料生成（北墙 + 东西畦） |
 
 ## 目录（Catalog）
 
@@ -103,6 +106,74 @@ python3 -m slabwater reopen /tmp/run772 <plan_id>
 - A3 只允许开 1 口：`L` 总 10、`R` 总 10，均超总量 7（`R` 虽满足中格≤2），故拒绝。
 - `invalid_correction` 使重合格 `(0,2)` 出现 1 与 2，冲突 → 整版拒绝，版本仍为 `[1,2]`。
 
+## 冬季苗床认养（Sun / Adoption）
+
+冬季只出租**能连晒约定拍数**的苗床。输入是已发布的地形切面号、三到四拍的太阳方向卡与菜畦位置。
+方向卡写明到某畦的沿线格与每格射线高度；中途格**标高达到射线**（`elevation >= ray_height`）
+即遮住该拍，标高一律从**真实冻结版本**解析，并随遮挡结果记下来源块（块 id、修订、局部行列）。
+
+### 日照与天气规则
+
+- 天气表给出若干**整日可能**，每种可能逐拍给出晴/阴，且同一种天气对所有畦同时生效——
+  不能在甲畦挑一天的晴时、又给乙畦换另一天。
+- 认养者要的是**同一盘苗在同一天真正连续照足约定拍数**；两盘各晒一拍不能合算，逐盘独立计连胜。
+- 一条入射线可经过多个沿线格，任一格达到射线即遮挡；遮挡证据逐块保留可复查来源。
+
+### 两种经营（签约时二选一）
+
+- **固定种植畦（`mode=fixed`）**：开单即划定成片床位，一盘苗绑定一畦，下地后不能因阴影改投隔壁。
+  只需证明该畦在**每一种允许天气**下都能凑足约定连胜，否则不签。
+- **带轮苗床（`mode=mobile`）**：可按当天**已观测到**的天气，把同一盘沿申报通道推到有使用权的另一畦。
+  移动需要空通道与当班园丁，**移动本身耗一拍且该拍不记日照**；策略在任何分支都不得读取未来拍的天气。
+
+策略引擎对天气不确定性做非预期（AND/OR）健壮搜索：
+
+- `reveal=dawn`：天气类型在首拍早晨揭晓，第 1 拍动作即可按天气分支；
+- `reveal=progressive`：只能依据已观测拍决策，第 1 拍动作被所有尚未区分的天气共用。
+
+限制：最多 **4 畦、4 拍、2 盘**。签约时对每种允许天气都能如约才签；不能兑现则在拒绝证据中
+指出**哪一盘在何拍**丢了连续日照（`shaded` / `cloudy` / `move_beat`）及对应遮挡来源块。
+
+### 实地交接（Hand-over）
+
+交接在签约之后的某一真实日子执行，另给当天 `weather_id`、当班 `gardeners`、被其他客户占用的
+`occupied` 床位，以及可选的 `observed_revision`（在更新的实测地形上核验）。在线逐拍：
+
+- 仅在仍与观测相容的天气可能中选健壮动作；目标床位被占、通道缺失、园丁不足都会留下
+  `bed_occupied` / `no_corridor` / `no_gardener` 证据；
+- 合同冻结签约时的版本与 `elevation_hash`，新地形不改写旧合同；交接报告同时保留
+  “签约地形”与“实测地形”两份哈希与 `terrain_changed` 标记；
+- 每盘每拍（含移动拍、遮挡来源块）都落账，供售后读回。
+
+### 签约 / 交接 / 重开入口
+
+```python
+from slabwater import Catalog, AdoptionRegistry
+
+catalog = Catalog("catalog.db", height=1, width=4, ceiling=6)
+catalog.apply_batch([...tiles...])
+registry = AdoptionRegistry("adoption.db", catalog)
+
+result = registry.sign(request)                 # 健壮可履约才签，否则 rejected/error + 证据
+registry.handover(handover_request)             # 当天实地交接，逐拍日照账本
+registry.get_contract(contract_id)              # 读回合同（畦权、策略、遮挡表）
+registry.get_handover(handover_id)              # 读回某次交接的逐拍记录
+registry.verify(contract_id)                    # 在冻结地形上重算健壮策略并核对工件哈希
+registry.reopen(contract_id)                    # 重开：取回当时畦权与日照记录
+```
+
+命令行：
+
+```bash
+python3 -m slabwater adopt <db_dir> sign_request.json
+python3 -m slabwater handover <db_dir> handover_request.json
+python3 -m slabwater contract <db_dir> <contract_id>
+```
+
+签约与交接都带幂等：同一 `id` + 同一输入原样复读；同一 `id` 换输入报 `idempotency_conflict`。
+被拒签约不写合同行。样例见 `materials/winter-garden`（含北墙升高、固定畦被占、带轮苗床移动、
+园丁/通道不足等全套叙事）。
+
 ## 测试
 
 ```bash
@@ -112,3 +183,9 @@ python3 -m unittest discover -s tests -v
 覆盖：切面/接缝/覆盖/越界/不可变修订/原子批次/重开；水位规则与“最低门槛不充分”；
 reuse 与 recompute 一致；修订使缓存失效；A1/A2/A3；幂等复读与冲突；版本隔离；
 核计划能发现篡改；12×12、8 出口压力与穷尽拒绝证据。
+
+苗床认养（`tests/test_adoption.py`，全套 56 项中的 31 项）覆盖：射线“达到即遮挡”与来源块留证；
+北墙升高由签约变拒绝并逐拍点名；固定畦床位被划走且无替畦不能交接；带轮苗床按揭晓天气移动、
+移动拍不记日照、东上午/西下午连照；园丁为零、通道缺失、目标畦被占的拒绝与交接失败；
+`dawn` 与 `progressive` 两种揭晓的非预期策略；整日天气不可跨畦挑天；两盘不得合算；
+4 畦/4 拍/2 盘上限；签约与交接幂等及冲突；版本隔离、重开取回畦权与日照账本、篡改核验。

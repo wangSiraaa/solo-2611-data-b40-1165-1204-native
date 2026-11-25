@@ -20,6 +20,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from .adoption import AdoptionRegistry
 from .catalog import Catalog
 from .publisher import Publisher
 
@@ -91,6 +92,18 @@ def main(argv: list[str] | None = None) -> int:
     reopen_parser.add_argument("db_dir")
     reopen_parser.add_argument("plan_id")
 
+    adopt_parser = sub.add_parser("adopt", help="sign a seedbed adoption contract")
+    adopt_parser.add_argument("db_dir")
+    adopt_parser.add_argument("request_json", help="path to a sign-request JSON file")
+
+    handover_parser = sub.add_parser("handover", help="execute a field hand-over for a contract")
+    handover_parser.add_argument("db_dir")
+    handover_parser.add_argument("request_json", help="path to a hand-over request JSON file")
+
+    contract_parser = sub.add_parser("contract", help="re-open a stored adoption contract")
+    contract_parser.add_argument("db_dir")
+    contract_parser.add_argument("contract_id")
+
     args = parser.parse_args(argv)
     if args.command == "run":
         report = run_material(args.input, args.db_dir)
@@ -98,6 +111,25 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     db_dir = Path(args.db_dir)
     catalog = Catalog.open(db_dir / "catalog.db")
+    if args.command in ("adopt", "handover", "contract"):
+        registry = AdoptionRegistry(db_dir / "adoption.db", catalog)
+        try:
+            if args.command == "adopt":
+                request = json.loads(Path(args.request_json).read_text(encoding="utf-8"))
+                result = registry.sign(request).to_dict()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0 if result["ok"] else 1
+            if args.command == "handover":
+                request = json.loads(Path(args.request_json).read_text(encoding="utf-8"))
+                result = registry.handover(request).to_dict()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0 if result["ok"] else 1
+            result = registry.reopen(args.contract_id).to_dict()
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0
+        finally:
+            registry.close()
+            catalog.close()
     publisher = Publisher(db_dir / "plans.db", catalog)
     try:
         if args.command == "verify":

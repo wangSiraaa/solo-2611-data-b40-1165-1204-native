@@ -1,0 +1,402 @@
+{
+  "height": 1,
+  "width": 4,
+  "ceiling": 6,
+  "initial_tiles": [
+    {
+      "tile_id": "NORTH",
+      "revision": 1,
+      "row": 0,
+      "col": 0,
+      "values": [
+        [
+          1,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  ],
+  "raised_wall": {
+    "tile_id": "NORTH",
+    "revision": 2,
+    "row": 0,
+    "col": 0,
+    "values": [
+      [
+        2,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "beds": [
+    {
+      "id": "E",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "W",
+      "cell": [
+        0,
+        2
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "bed_id": "E",
+      "beat": 1,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 2
+    },
+    {
+      "bed_id": "E",
+      "beat": 2,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 2
+    },
+    {
+      "bed_id": "E",
+      "beat": 3,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 1
+    },
+    {
+      "bed_id": "E",
+      "beat": 4,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 1
+    },
+    {
+      "bed_id": "W",
+      "beat": 1,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 1
+    },
+    {
+      "bed_id": "W",
+      "beat": 2,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 1
+    },
+    {
+      "bed_id": "W",
+      "beat": 3,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 3
+    },
+    {
+      "bed_id": "W",
+      "beat": 4,
+      "path": [
+        [
+          0,
+          0
+        ]
+      ],
+      "ray_height": 3
+    }
+  ],
+  "corridors": [
+    [
+      "E",
+      "W"
+    ]
+  ],
+  "gardeners": 1,
+  "weather": [
+    {
+      "id": "CLEAR",
+      "beats": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "CLOUD_AM",
+      "beats": [
+        false,
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "sign_requests": [
+    {
+      "id": "FIX-EAST",
+      "source_revision": 1,
+      "mode": "fixed",
+      "beds": [
+        {
+          "id": "E",
+          "cell": [
+            0,
+            1
+          ]
+        }
+      ],
+      "weather": [
+        {
+          "id": "SUN",
+          "beats": [
+            true,
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "bed_id": "E",
+          "beat": 1,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 2
+        },
+        {
+          "bed_id": "E",
+          "beat": 2,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 2
+        },
+        {
+          "bed_id": "E",
+          "beat": 3,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        },
+        {
+          "bed_id": "E",
+          "beat": 4,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        }
+      ],
+      "gardeners": 0,
+      "trays": [
+        {
+          "id": "M1",
+          "initial": "E",
+          "rights": [
+            "E"
+          ],
+          "sun_beats": 2
+        }
+      ]
+    },
+    {
+      "id": "MOB-EW",
+      "source_revision": 1,
+      "mode": "mobile",
+      "reveal": "dawn",
+      "beds": [
+        {
+          "id": "E",
+          "cell": [
+            0,
+            1
+          ]
+        },
+        {
+          "id": "W",
+          "cell": [
+            0,
+            2
+          ]
+        }
+      ],
+      "weather": [
+        {
+          "id": "CLEAR",
+          "beats": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "id": "CLOUD_AM",
+          "beats": [
+            false,
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "cards": [
+        {
+          "bed_id": "E",
+          "beat": 1,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 2
+        },
+        {
+          "bed_id": "E",
+          "beat": 2,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 2
+        },
+        {
+          "bed_id": "E",
+          "beat": 3,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        },
+        {
+          "bed_id": "E",
+          "beat": 4,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        },
+        {
+          "bed_id": "W",
+          "beat": 1,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        },
+        {
+          "bed_id": "W",
+          "beat": 2,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 1
+        },
+        {
+          "bed_id": "W",
+          "beat": 3,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 3
+        },
+        {
+          "bed_id": "W",
+          "beat": 4,
+          "path": [
+            [
+              0,
+              0
+            ]
+          ],
+          "ray_height": 3
+        }
+      ],
+      "corridors": [
+        [
+          "E",
+          "W"
+        ]
+      ],
+      "gardeners": 1,
+      "trays": [
+        {
+          "id": "P1",
+          "initial": "E",
+          "rights": [
+            "E",
+            "W"
+          ],
+          "sun_beats": 2
+        }
+      ]
+    }
+  ]
+}
